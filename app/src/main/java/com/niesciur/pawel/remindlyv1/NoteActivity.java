@@ -11,21 +11,27 @@ import android.widget.Spinner;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_note);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Spinner spinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
+        //  SPINNER ADAPTER
+        //  As in: https://developer.android.com/guide/topics/ui/controls/spinner
 
+        Spinner spinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
+        //
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
+        //  Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CourseInfo> adapterCourses =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courses);
+        //  Specify the layout to use when the list of choices appears
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //  Apply the adapter to the spinner
         spinnerCourses.setAdapter(adapterCourses);
     }
 
