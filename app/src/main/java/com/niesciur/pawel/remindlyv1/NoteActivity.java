@@ -1,5 +1,6 @@
 package com.niesciur.pawel.remindlyv1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,8 @@ import android.widget.Spinner;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
+    public static final String NOTE_INFO = "com.niesciur.pawel.remindlyv1.NOTE_INFO";
+    private NoteInfo mNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +23,9 @@ public class NoteActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //  SPINNER ADAPTER
+        /**  SPINNER ADAPTER
         //  As in: https://developer.android.com/guide/topics/ui/controls/spinner
-
+        */
         Spinner spinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
         //
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
@@ -33,6 +36,14 @@ public class NoteActivity extends AppCompatActivity {
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //  Apply the adapter to the spinner
         spinnerCourses.setAdapter(adapterCourses);
+
+        /**READING INTENT CONTENT*/
+        readDisplayStateValues();
+    }
+
+    private void readDisplayStateValues() {
+        Intent intent = getIntent();
+        mNote = intent.getParcelableExtra(NOTE_INFO);
     }
 
     @Override

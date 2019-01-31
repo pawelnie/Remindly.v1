@@ -31,31 +31,33 @@ public class NoteListActivity extends AppCompatActivity {
             }
         });
 
+        //Below method provides content for the list of notes -> LIST ADAPTER
         initializeDisplayContent();
 
 
     }
-    //  Do ogarniecia ponizszy adapter do spinnera
-    //  TODO
 
-
-
+    /**  LIST ADAPTER
+     */
     private void initializeDisplayContent() {
-        ListView listNotes = (ListView) findViewById(R.id.list_notes);
+        final ListView listNotes = (ListView) findViewById(R.id.list_notes);
+        //Adapter
         List<NoteInfo> notes = DataManager.getInstance().getNotes();
         ArrayAdapter<NoteInfo> adapterNotes = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
 
         listNotes.setAdapter(adapterNotes);
 
+        //On Click Listener for selection handling
         listNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //Anonymous classes are used here so intent is quite tricky
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(NoteListActivity.this, NoteActivity.class);
-            startActivity(intent);
+                NoteInfo note = (NoteInfo) listNotes.getItemAtPosition(position);
+                intent.putExtra(NoteActivity.NOTE_INFO, note);
+                startActivity(intent);
             }
         });
 
     }
-
-
 }
