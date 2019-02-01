@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class NoteActivity extends AppCompatActivity {
     public static final String NOTE_INFO = "com.niesciur.pawel.remindlyv1.NOTE_INFO";
     private NoteInfo mNote;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,31 @@ public class NoteActivity extends AppCompatActivity {
 
         /**READING INTENT CONTENT*/
         readDisplayStateValues();
+
+        /**
+         * References to editable text fields
+         */
+        EditText textNoteTitle = (EditText) findViewById(R.id.text_note_title);
+        EditText textNoteText = (EditText) findViewById(R.id.text_note_text);
+
+        /**Method that copies values of mNote fields to new fields that are connected to UI elements*/
+        displayNote(spinnerCourses, textNoteTitle, textNoteText);
+
+
     }
 
+    private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+        List<CourseInfo> courses = DataManager.getInstance().getCourses();
+        int courseIndex = courses.indexOf(mNote.getCourse());
+        spinnerCourses.setSelection(courseIndex);
+        textNoteTitle.setText(mNote.getTitle());
+        textNoteText.setText(mNote.getText());
+    }
+
+    /**
+     * Intent passes parcelable object which is instance of NoteInfo, reference to this object is kept in NOTE_INFO
+     * Below method receives intent's extra content and saves in mNote object
+     */
     private void readDisplayStateValues() {
         Intent intent = getIntent();
         mNote = intent.getParcelableExtra(NOTE_INFO);

@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/tex_note_title"
+        android:id="@+id/text_note_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -39,7 +39,7 @@
         android:ems="10"
         android:hint="Note text"
         android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="@+id/tex_note_title"
-        app:layout_constraintStart_toStartOf="@+id/tex_note_title"
-        app:layout_constraintTop_toBottomOf="@+id/tex_note_title" />
+        app:layout_constraintEnd_toEndOf="@+id/text_note_title"
+        app:layout_constraintStart_toStartOf="@+id/text_note_title"
+        app:layout_constraintTop_toBottomOf="@+id/text_note_title" />
 </android.support.constraint.ConstraintLayout>
