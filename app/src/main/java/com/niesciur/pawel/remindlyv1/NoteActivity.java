@@ -14,7 +14,8 @@ import android.widget.Spinner;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
-    public static final String NOTE_INFO = "com.niesciur.pawel.remindlyv1.NOTE_INFO";
+    public static final String NOTE_POSITION = "com.niesciur.pawel.remindlyv1.NOTE_POSITION";
+    public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNote;
     private boolean mIsNewNote;
 
@@ -64,15 +65,17 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     /**
-     * Intent passes parcelable object which is instance of NoteInfo, reference to this object is kept in NOTE_INFO
+     * Intent passes parcelable object which is instance of NoteInfo, reference to this object is kept in NOTE_POSITION
      * Below method receives intent's extra content and saves in mNote object
      */
     private void readDisplayStateValues() {
         //When selecting existing note on NoteListActivity, so extra is not null:
         Intent intent = getIntent();
-        mNote = intent.getParcelableExtra(NOTE_INFO);
+        int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
         //When creating new Note via fab, we recognize that it is new by checking if mNote == null because no extra is provide with intent
-        mIsNewNote = mNote == null;
+        mIsNewNote = position == POSITION_NOT_SET;
+        if(!mIsNewNote)
+            mNote = DataManager.getInstance().getNotes().get(position);
     }
 
     @Override
