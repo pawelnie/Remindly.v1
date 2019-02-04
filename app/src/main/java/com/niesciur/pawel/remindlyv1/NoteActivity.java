@@ -16,6 +16,7 @@ import java.util.List;
 public class NoteActivity extends AppCompatActivity {
     public static final String NOTE_INFO = "com.niesciur.pawel.remindlyv1.NOTE_INFO";
     private NoteInfo mNote;
+    private boolean mIsNewNote;
 
 
     @Override
@@ -49,9 +50,9 @@ public class NoteActivity extends AppCompatActivity {
         EditText textNoteText = (EditText) findViewById(R.id.text_note_text);
 
         /**Method that copies values of mNote fields to new fields that are connected to UI elements*/
-        displayNote(spinnerCourses, textNoteTitle, textNoteText);
-
-
+        //if added to account for creation of new note via fab button
+        if(!mIsNewNote)
+            displayNote(spinnerCourses, textNoteTitle, textNoteText);
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
@@ -67,8 +68,11 @@ public class NoteActivity extends AppCompatActivity {
      * Below method receives intent's extra content and saves in mNote object
      */
     private void readDisplayStateValues() {
+        //When selecting existing note on NoteListActivity, so extra is not null:
         Intent intent = getIntent();
         mNote = intent.getParcelableExtra(NOTE_INFO);
+        //When creating new Note via fab, we recognize that it is new by checking if mNote == null because no extra is provide with intent
+        mIsNewNote = mNote == null;
     }
 
     @Override
