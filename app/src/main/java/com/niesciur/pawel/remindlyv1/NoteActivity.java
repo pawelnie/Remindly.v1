@@ -1,6 +1,7 @@
 package com.niesciur.pawel.remindlyv1;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,9 @@ public class NoteActivity extends AppCompatActivity {
     public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNote;
     private boolean mIsNewNote;
+    private Spinner mSpinnerCourses;
+    private EditText mTextNoteTitle;
+    private EditText mTextNoteText;
 
 
     @Override
@@ -30,7 +34,7 @@ public class NoteActivity extends AppCompatActivity {
         /**  SPINNER ADAPTER
         //  As in: https://developer.android.com/guide/topics/ui/controls/spinner
         */
-        Spinner spinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
+        mSpinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
         //
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         //  Create an ArrayAdapter using the string array and a default spinner layout
@@ -39,7 +43,7 @@ public class NoteActivity extends AppCompatActivity {
         //  Specify the layout to use when the list of choices appears
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //  Apply the adapter to the spinner
-        spinnerCourses.setAdapter(adapterCourses);
+        mSpinnerCourses.setAdapter(adapterCourses);
 
         /**READING INTENT CONTENT*/
         readDisplayStateValues();
@@ -47,13 +51,13 @@ public class NoteActivity extends AppCompatActivity {
         /**
          * References to editable text fields
          */
-        EditText textNoteTitle = (EditText) findViewById(R.id.text_note_title);
-        EditText textNoteText = (EditText) findViewById(R.id.text_note_text);
+        mTextNoteTitle = (EditText) findViewById(R.id.text_note_title);
+        mTextNoteText = (EditText) findViewById(R.id.text_note_text);
 
         /**Method that copies values of mNote fields to new fields that are connected to UI elements*/
         //if added to account for creation of new note via fab button
         if(!mIsNewNote)
-            displayNote(spinnerCourses, textNoteTitle, textNoteText);
+            displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
@@ -93,10 +97,62 @@ public class NoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_send_mail) {
+            sendEmail();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+    /**Sending Note in an email*/
+    private void sendEmail() {
+        CourseInfo course = (CourseInfo) mSpinnerCourses.getSelectedItem();
+        String subject = mTextNoteTitle.getText().toString();
+        String text = "Checkout what I learned in the Pluralsight course \"" +
+                course.getTitle() + "\"\n" + mTextNoteText.getText().toString();
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(intent);
+
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
