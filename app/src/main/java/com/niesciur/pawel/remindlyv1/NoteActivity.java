@@ -3,7 +3,6 @@ package com.niesciur.pawel.remindlyv1;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 //import android.view.View;
@@ -17,6 +16,9 @@ import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
     public static final String NOTE_POSITION = "com.niesciur.pawel.remindlyv1.NOTE_POSITION";
+    public static final String ORIGINAL_NOTE_COURSE_ID = "com.niesciur.pawel.remindlyv1.ORIGINAL_NOTE_COURSE_ID";
+    public static final String ORIGINAL_NOTE_TITLE = "com.niesciur.pawel.remindlyv1.ORIGINAL_NOTE_COURSE_TITLE";
+    public static final String ORIGINAL_NOTE_TEXT = "com.niesciur.pawel.remindlyv1.ORIGINAL_NOTE_COURSE_TEXT";
     public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNote;
     private boolean mIsNewNote;
@@ -25,6 +27,9 @@ public class NoteActivity extends AppCompatActivity {
     private EditText mTextNoteText;
     private int mNotePosition;
     private boolean mIsCanceling;
+    private String mOriginalNoteCourseId;
+    private String mOriginalNoteTitle;
+    private String mOriginalNoteText;
 
 
     @Override
@@ -50,6 +55,11 @@ public class NoteActivity extends AppCompatActivity {
 
         /**READING INTENT CONTENT*/
         readDisplayStateValues();
+        if(savedInstanceState == null) {
+            saveOriginalNoteValues();
+        } else {
+            restoreOriginalNoteValues(savedInstanceState);
+        }
 
         /**
          * References to editable text fields
@@ -63,16 +73,49 @@ public class NoteActivity extends AppCompatActivity {
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
     }
 
+    private void restoreOriginalNoteValues(Bundle savedInstanceState) {
+        mOriginalNoteCourseId = savedInstanceState.getString(ORIGINAL_NOTE_COURSE_ID);
+        mOriginalNoteTitle = savedInstanceState.getString(ORIGINAL_NOTE_TITLE);
+        mOriginalNoteText = savedInstanceState.getString(ORIGINAL_NOTE_TEXT);
+    }
+
+    private void saveOriginalNoteValues() {
+        if(mIsNewNote)
+            return;
+        mOriginalNoteCourseId = mNote.getCourse().getCourseId();
+        mOriginalNoteTitle = mNote.getTitle();
+        mOriginalNoteText = mNote.getText();
+
+
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         if(mIsCanceling) {
             if(mIsNewNote) {
                 DataManager.getInstance().removeNote(mNotePosition);
+            } else {
+                storePreviousNoteValues();
             }
         } else {
             saveNote();
         }
+    }
+
+    private void storePreviousNoteValues() {
+            CourseInfo course = DataManager.getInstance().getCourse(mOriginalNoteCourseId);
+            mNote.setCourse(course);
+            mNote.setTitle(mOriginalNoteTitle);
+            mNote.setText(mOriginalNoteText);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(ORIGINAL_NOTE_COURSE_ID, mOriginalNoteCourseId);
+        outState.putString(ORIGINAL_NOTE_TITLE, mOriginalNoteTitle);
+        outState.putString(ORIGINAL_NOTE_TEXT, mOriginalNoteText);
     }
 
     private void saveNote() {
