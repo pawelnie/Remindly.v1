@@ -3,6 +3,7 @@ package com.niesciur.pawel.remindlyv1;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 //import android.view.View;
@@ -22,6 +23,8 @@ public class NoteActivity extends AppCompatActivity {
     private Spinner mSpinnerCourses;
     private EditText mTextNoteTitle;
     private EditText mTextNoteText;
+    private int mNotePosition;
+    private boolean mIsCanceling;
 
 
     @Override
@@ -60,6 +63,24 @@ public class NoteActivity extends AppCompatActivity {
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mIsCanceling) {
+            if(mIsNewNote) {
+                DataManager.getInstance().removeNote(mNotePosition);
+            }
+        } else {
+            saveNote();
+        }
+    }
+
+    private void saveNote() {
+        mNote.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
+        mNote.setTitle(mTextNoteTitle.getText().toString());
+        mNote.setText(mTextNoteText.getText().toString());
+    }
+
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         int courseIndex = courses.indexOf(mNote.getCourse());
@@ -78,9 +99,20 @@ public class NoteActivity extends AppCompatActivity {
         int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
         //When creating new Note via fab, we recognize that it is new by checking if mNote == null because no extra is provide with intent
         mIsNewNote = position == POSITION_NOT_SET;
-        if(!mIsNewNote)
+        if (mIsNewNote) {
+            createNewNote();
+
+        } else {
             mNote = DataManager.getInstance().getNotes().get(position);
+        }
     }
+
+    private void createNewNote() {
+        DataManager dm = DataManager.getInstance();
+        mNotePosition = dm.createNewNote();
+        mNote = dm.getNotes().get(mNotePosition);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,6 +132,9 @@ public class NoteActivity extends AppCompatActivity {
         if (id == R.id.action_send_mail) {
             sendEmail();
             return true;
+        } else if (id ==R.id.action_cancel) {
+            mIsCanceling = true;
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -120,6 +155,8 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 }
+
+
 
 
 
