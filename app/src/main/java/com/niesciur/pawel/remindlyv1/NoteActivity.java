@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 //import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,7 @@ import android.widget.Spinner;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
+    private final String TAG = getClass().getSimpleName();
     public static final String NOTE_POSITION = "com.niesciur.pawel.remindlyv1.NOTE_POSITION";
     public static final String ORIGINAL_NOTE_COURSE_ID = "com.niesciur.pawel.remindlyv1.ORIGINAL_NOTE_COURSE_ID";
     public static final String ORIGINAL_NOTE_TITLE = "com.niesciur.pawel.remindlyv1.ORIGINAL_NOTE_COURSE_TITLE";
@@ -67,10 +69,12 @@ public class NoteActivity extends AppCompatActivity {
         mTextNoteTitle = (EditText) findViewById(R.id.text_note_title);
         mTextNoteText = (EditText) findViewById(R.id.text_note_text);
 
-        /**Method that copies values of mNote fields to new fields that are connected to UI elements*/
-        //if added to account for creation of new note via fab button
+        /**Method that copies values of mNote fields to new fields that are connected to UI elements
+        if added to account for creation of new note via fab button */
         if(!mIsNewNote)
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+
+        Log.d(TAG, "onCreate");
     }
 
     private void restoreOriginalNoteValues(Bundle savedInstanceState) {
@@ -93,6 +97,7 @@ public class NoteActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(mIsCanceling) {
+            Log.i(TAG, "Cancelling note at position: " + mNotePosition);
             if(mIsNewNote) {
                 DataManager.getInstance().removeNote(mNotePosition);
             } else {
@@ -101,6 +106,9 @@ public class NoteActivity extends AppCompatActivity {
         } else {
             saveNote();
         }
+
+        Log.d(TAG, "onPause");
+
     }
 
     private void storePreviousNoteValues() {
@@ -139,21 +147,20 @@ public class NoteActivity extends AppCompatActivity {
     private void readDisplayStateValues() {
         //When selecting existing note on NoteListActivity, so extra is not null:
         Intent intent = getIntent();
-        int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
+        mNotePosition = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
         //When creating new Note via fab, we recognize that it is new by checking if mNote == null because no extra is provide with intent
-        mIsNewNote = position == POSITION_NOT_SET;
+        mIsNewNote = mNotePosition == POSITION_NOT_SET;
         if (mIsNewNote) {
             createNewNote();
-
-        } else {
-            mNote = DataManager.getInstance().getNotes().get(position);
         }
+        Log.i(TAG, "mNotePosition: " + mNotePosition);
+        mNote = DataManager.getInstance().getNotes().get(mNotePosition);
     }
 
     private void createNewNote() {
         DataManager dm = DataManager.getInstance();
         mNotePosition = dm.createNewNote();
-        mNote = dm.getNotes().get(mNotePosition);
+//        mNote = dm.getNotes().get(mNotePosition);
     }
 
 
