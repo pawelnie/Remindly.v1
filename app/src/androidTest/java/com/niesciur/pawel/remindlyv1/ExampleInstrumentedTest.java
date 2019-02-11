@@ -23,4 +23,6 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.niesciur.pawel.remindlyv1", appContext.getPackageName());
     }
+
+
 }
