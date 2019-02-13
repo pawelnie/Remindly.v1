@@ -5,10 +5,14 @@
     <item
         android:id="@+id/action_cancel"
         android:orderInCategory="100"
-        android:title=" Can cel" />
+        android:title="Cancel" />
+    <item
+        android:id="@+id/action_next"
+        android:orderInCategory="101"
+        android:title="Next" />
     <item
         android:id="@+id/action_send_mail"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:title="Send as email"
         app:showAsAction="never" />
 </menu>
