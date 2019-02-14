@@ -192,8 +192,39 @@ public class NoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void moveNext() {
+    /**
+     * Prepare the Screen's standard options menu to be displayed.  This is
+     * called right before the menu is shown, every time it is shown.  You can
+     * use this method to efficiently enable/disable items or otherwise
+     * dynamically modify the contents.
+     *
+     * <p>The default implementation updates the system menu items based on the
+     * activity's state.  Deriving classes should always call through to the
+     * base class implementation.
+     *
+     * @param menu The options menu as last shown or first initialized by
+     *             onCreateOptionsMenu().
+     * @return You must return true for the menu to be displayed;
+     * if you return false it will not be shown.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_next);
+        int lastNoteIndex = DataManager.getInstance().getNotes().size() - 1;
+        item.setEnabled(mNotePosition < lastNoteIndex);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
+    private void moveNext() {
+        saveNote();
+
+        ++mNotePosition;
+        mNote = DataManager.getInstance().getNotes().get(mNotePosition);
+
+        saveOriginalNoteValues();
+        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+        invalidateOptionsMenu();
     }
 
     /**Sending Note in an email*/
