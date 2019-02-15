@@ -20,6 +20,7 @@ public class DataManager {
             ourInstance = new DataManager();
             ourInstance.initializeCourses();
             ourInstance.initializeExampleNotes();
+
         }
         return ourInstance;
     }
