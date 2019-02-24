@@ -2,6 +2,7 @@ package com.niesciur.pawel.remindlyv1;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity
     private LinearLayoutManager mNotesLayoutManager;
     private GridLayoutManager mCourseLayoutManager;
     private CourseRecyclerAdapter mCourseRecyclerAdapter;
+    private NoteKeeperOpenHelper mDbOpenHelper;
 
 
     @Override
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mDbOpenHelper = new NoteKeeperOpenHelper(this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +67,14 @@ public class MainActivity extends AppCompatActivity
 
         initializeDisplayContent();
     }
+
+
+    @Override
+    protected void onDestroy() {
+        mDbOpenHelper.close();
+        super.onDestroy();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -108,6 +119,8 @@ public class MainActivity extends AppCompatActivity
     private void displayNotes() {
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
         mRecyclerItems.setLayoutManager(mNotesLayoutManager);
+
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
         selectNavigationMenuItem(R.id.nav_notes);
     }
